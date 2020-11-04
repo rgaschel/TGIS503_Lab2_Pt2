@@ -1,0 +1,79 @@
+<html>
+<head>
+	<title>Lab 2 Part_2</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"/>
+	<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>
+	<script src= "https://cdn.jsdelivr.net/npm/leaflet-legend@1.0.2/leaflet-legend.min.js"></script>
+	</script>
+		<style>
+			body {
+				font-family: sans-serif;
+				max-width: 90px
+				margin: auto;
+				font-size: 10px
+						}
+			#legend {
+				line-height: 0px;
+				background: white;
+				opacity: 0.8;
+				padding:5px 25px 5px 0px;
+							}
+		</style>
+
+
+</head>
+
+<body>
+	<h1> King County Parks located within landslide hazard zones along the I-90 Corridor <h1>
+		<div id="map" style="height: 80%"></div>
+			<h3> This map displays King County Public Parks and their relative relation to historic landslide hazards within the region.  The intent is to provide a visual representation of parks that may include landslide hazards within King County.</h3>
+			<p> Sources: </p>
+			<p> <a href="https://gis-kingcounty.opendata.arcgis.com/datasets/park-label-points-park-label-point?geometry=-122.534%2C47.438%2C-121.886%2C47.600" target="_blank">King County Parks</a></p>
+			<p> <a href="https://gis-kingcounty.opendata.arcgis.com/datasets/landslide-hazards-incorporated-kc-1990-annexed-landslide-sao1990-area?geometry=-122.281%2C47.504%2C-121.957%2C47.585" target="_blank"> Landslide hazards; incorporated KC 1990 </a> </p>
+			<div id="legend">
+		<h3><center>Legend</center></h3>
+		<ul style="list-style-type:none">
+			<li>
+				<svg width="26" height="30">
+					<circle cx="18" cy="24" r="2" stroke="dodgerblue" stroke-width="5" fill="dodgerblue" fill-opacity=".4"/>
+				</svg>
+				<text>Landslide Hazard Area</text>
+			</li>
+			<li>
+				<svg width="24" height="24">
+					<circle cx="18" cy="20" r="2" stroke="green" stroke-width="2" fill="green" fill-opacity="1"/>
+				</svg>
+				<text>King County Public Park</text>
+			</li>
+
+
+	</div>
+
+	<script>
+				var mymap = L.map('map').setView([47.58, -122.1], 12);
+				var basemap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png', {
+				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			}).addTo(mymap);
+			$.getJSON("https://opendata.arcgis.com/datasets/db06f62241de44bdbc5591d4341784b4_2527.geojson",function(data){
+			L.geoJson(data).addTo(mymap);
+			$.getJSON("https://opendata.arcgis.com/datasets/d7411f90e0694bf89b93cdaee4e18117_884.geojson",function(data){
+			    L.geoJson(data, {
+			        pointToLayer: function(feature, latlng){
+			            var marker = L.circleMarker(latlng, {radius: 2, color: "green"});
+									marker.bindPopup("Park Name: " + feature.properties.SiteName);
+			            return marker;
+			        }
+			    }).addTo(mymap);
+			});
+
+	});
+	var Legend =  new L.Control.Legend({
+		position: 'topright',
+	});
+
+	mymap.addControl(Legend);
+	$(".legend-container").append( $("#legend") );
+	</script>
+</body>
+</html>
